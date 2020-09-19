@@ -1,38 +1,49 @@
 {
-	"name": "display-nums",
-	"displayName": "Display nums",
-	"description": "Shows a number in 10, 16, 2 and 8 numeral systems",
-	"version": "0.1.0",
-	"publisher": "nia40m",
-	"engines": {
-		"vscode": "^1.49.0"
-	},
-	"repository": {
+    "name": "display-nums",
+    "displayName": "Display numbers",
+    "description": "Shows a number in 10, 16, 2 and 8 numeral systems",
+    "icon": "icon.png",
+    "version": "0.1.1",
+    "publisher": "nia40m",
+    "engines": {
+        "vscode": "^1.49.0"
+    },
+    "repository": {
         "type": "git",
         "url": "https://github.com/nia40m/vscode-display-nums"
     },
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/extension",
-	"contributes": {},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.11.7",
-		"@types/vscode": "^1.49.0",
-		"glob": "^7.1.5",
-		"mocha": "^6.2.2",
-		"typescript": "^3.6.4",
-		"tslint": "^5.20.0",
-		"vscode-test": "^1.2.2"
-	}
+    "keywords": [
+        "numbers",
+        "convert",
+        "hex",
+        "decimal",
+        "octal",
+        "binary",
+        "display",
+        "hover"
+    ],
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/extension",
+    "contributes": {},
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.1",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.11.7",
+        "@types/vscode": "^1.49.0",
+        "glob": "^7.1.5",
+        "mocha": "^6.2.2",
+        "typescript": "^3.6.4",
+        "tslint": "^5.20.0",
+        "vscode-test": "^1.2.2"
+    }
 }
