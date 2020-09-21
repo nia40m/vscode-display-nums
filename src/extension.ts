@@ -7,7 +7,7 @@ const oct_re = new RegExp("^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$", 'i')
 const bin_re = new RegExp("^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$", 'i')
 
 function parse_number(text: string) {
-    var match
+    let match
 
     // TODO: remove underscores in the number
     // text = text.split(split_re).join("")
@@ -36,7 +36,7 @@ function parse_number(text: string) {
 }
 
 function format_str(str: string, num: number, separator: string = " ") {
-    var res = str.substr(-num)
+    let res = str.substr(-num)
     str = str.substr(0, str.length-num)
 
     while (str.length) {
@@ -49,8 +49,8 @@ function format_str(str: string, num: number, separator: string = " ") {
 
 // TODO: rewrite this sh*tty code
 function gen_bits_position_string(curr_bits: number) {
-    var start = 4
-    var str = "0"
+    let start = 4
+    let str = "0"
 
     str += "||||"
     while (start < curr_bits) {
@@ -65,10 +65,10 @@ function gen_bits_position_string(curr_bits: number) {
 }
 
 function set_bits_commands(str: string, position: vscode.Position) {
-    var arr = str.split("|")
-    var counter = 0
+    let arr = str.split("|")
+    let counter = 0
 
-    for (var i = arr.length - 1; i >= 0; i--) {
+    for (let i = arr.length - 1; i >= 0; i--) {
         if (arr[i] == '0' || arr[i] == '1') {
             // TODO: make this a type or smth?
             let data = {"offset": counter, "pos":{"line": position.line, "char": position.character}}
@@ -89,7 +89,7 @@ function get_curr_bits_in_word(num: number) {
 }
 
 function gen_basic_string(num: number, position: vscode.Position) {
-    var str: string = ""
+    let str: string = ""
 
     str += "|||\n"
     str += "|---|---|\n"
@@ -125,7 +125,7 @@ class Provider {
             return null
         }
 
-        var str = new vscode.MarkdownString()
+        let str = new vscode.MarkdownString()
         str.isTrusted = true
 
         str.appendMarkdown(gen_basic_string(num.number, position))
