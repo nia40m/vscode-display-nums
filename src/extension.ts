@@ -9,8 +9,8 @@ const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 function parse_number(text: string) {
     let match
 
-    // TODO: remove underscores in the number
-    // text = text.split(split_re).join("")
+    // remove underscores in the number
+    text = text.split(split_re).join("")
 
     match = text.match(dec_re)
     if (match && match[1]) {
