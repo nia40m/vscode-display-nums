@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 
-// const split_re = new RegExp("\B_\B", 'i')
-const dec_re = new RegExp("^(0|([1-9][0-9]*))(u|l|ul|lu|ll|ull|llu)?$", 'i')
-const hex_re = new RegExp("^0x([0-9a-f]+)(u|l|ul|lu|ll|ull|llu)?$", 'i')
-const oct_re = new RegExp("^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$", 'i')
-const bin_re = new RegExp("^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$", 'i')
+const split_re = /\B_\B/i;
+const dec_re = /^(0|([1-9][0-9]*))(u|l|ul|lu|ll|ull|llu)?$/i;
+const hex_re = /^0x([0-9a-f]+)(u|l|ul|lu|ll|ull|llu)?$/i;
+const oct_re = /^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$/i;
+const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 
 function parse_number(text: string) {
     let match
