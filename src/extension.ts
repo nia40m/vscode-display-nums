@@ -152,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
         const document = vscode.window.activeTextEditor?.document
 
         if (!document) {
-            return
+            return null
         }
 
         const pos = new vscode.Position(obj.pos.line, obj.pos.char)
@@ -181,7 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
             break
         }
 
-        vscode.window.activeTextEditor?.edit(
+        return vscode.window.activeTextEditor?.edit(
             function (builder) {
                 builder.replace(wordRange, prefix + changed.toString(num.base));
             }
