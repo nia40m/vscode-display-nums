@@ -190,6 +190,3 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('display_nums.change_bit', commandHandler))
 }
-
-exports.activate = activate
-exports.Provider = Provider
