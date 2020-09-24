@@ -163,7 +163,18 @@ export function activate(context: vscode.ExtensionContext) {
             return null;
         }
 
-        const changed = BigInt(num.number) ^ (BigInt(1) << BigInt(obj.offset));
+        // convert number to string of bits
+        let bin_num = num.number.toString(2).padStart(get_curr_bits_in_word(num.number), "0");
+
+        // calculate inverting bit's position and it's value
+        obj.offset = bin_num.length - obj.offset - 1;
+        const val = bin_num[obj.offset] == "0" ? 1 : 0;
+
+        // replace that bit with magic
+        bin_num = bin_num.substr(0, obj.offset) + val.toString(2) + bin_num.substr(obj.offset + 1);
+
+        // turn back it to int
+        const changed = parseInt(bin_num, 2);
 
         let prefix = "";
         switch (num.base) {
