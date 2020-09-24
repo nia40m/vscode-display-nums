@@ -7,130 +7,130 @@ const oct_re = /^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 
 function parse_number(text: string) {
-    let match
+    let match;
 
     // remove underscores in the number
-    text = text.split(split_re).join("")
+    text = text.split(split_re).join("");
 
-    match = text.match(dec_re)
+    match = text.match(dec_re);
     if (match && match[1]) {
-        return {"number": parseInt(match[1], 10), "base": 10}
+        return {"number": parseInt(match[1], 10), "base": 10};
     }
 
-    match = text.match(hex_re)
+    match = text.match(hex_re);
     if (match && match[1]) {
-        return {"number": parseInt(match[1], 16), "base": 16}
+        return {"number": parseInt(match[1], 16), "base": 16};
     }
 
-    match = text.match(oct_re)
+    match = text.match(oct_re);
     if (match && match[1]) {
-        return {"number": parseInt(match[1], 8), "base": 8}
+        return {"number": parseInt(match[1], 8), "base": 8};
     }
 
-    match = text.match(bin_re)
+    match = text.match(bin_re);
     if (match && match[1]) {
-        return {"number": parseInt(match[1], 2), "base": 2}
+        return {"number": parseInt(match[1], 2), "base": 2};
     }
 
-    return undefined
+    return undefined;
 }
 
 function format_str(str: string, num: number, separator: string = " ") {
-    let res = str.substr(-num)
-    str = str.substr(0, str.length-num)
+    let res = str.substr(-num);
+    str = str.substr(0, str.length-num);
 
     while (str.length) {
-        res = str.substr(-num) + separator + res
-        str = str.substr(0, str.length-num)
+        res = str.substr(-num) + separator + res;
+        str = str.substr(0, str.length-num);
     }
 
-    return res
+    return res;
 }
 
 // TODO: rewrite this sh*tty code
 function gen_bits_position_string(curr_bits: number) {
-    let start = 4
-    let str = "0"
+    let start = 4;
+    let str = "0";
 
-    str += "||||"
+    str += "||||";
     while (start < curr_bits) {
-        str += "||"
-        str += start.toString(10)
-        str += "||||"
+        str += "||";
+        str += start.toString(10);
+        str += "||||";
 
-        start += 4
+        start += 4;
     }
 
-    return str.split("|").reverse().join("|")
+    return str.split("|").reverse().join("|");
 }
 
 function set_bits_commands(str: string, position: vscode.Position) {
-    let arr = str.split("|")
-    let counter = 0
+    let arr = str.split("|");
+    let counter = 0;
 
     for (let i = arr.length - 1; i >= 0; i--) {
         if (arr[i] == '0' || arr[i] == '1') {
             // TODO: make this a type or smth?
-            let data = {"offset": counter, "pos":{"line": position.line, "char": position.character}}
+            let data = {"offset": counter, "pos":{"line": position.line, "char": position.character}};
 
-            arr[i] = '[' + arr[i] + '](command:display_nums.change_bit?' + JSON.stringify(data) + ')'
+            arr[i] = '[' + arr[i] + '](command:display_nums.change_bit?' + JSON.stringify(data) + ')';
 
-            counter++
+            counter++;
         }
     }
 
-    return arr.join("|")
+    return arr.join("|");
 }
 
 // TODO: add configs with default length
 // do vscode have configs?? oO
 function get_curr_bits_in_word(num: number) {
-    return num.toString(2).length + ((-num.toString(2).length) & 0x3)
+    return num.toString(2).length + ((-num.toString(2).length) & 0x3);
 }
 
 function gen_basic_string(num: number, position: vscode.Position) {
-    let str: string = ""
+    let str: string = "";
 
-    str += "|||\n"
-    str += "|---|---|\n"
-    str += "|Hex:|" + format_str(num.toString(16), 2)  + "|\n"
-    str += "|Dec:|" + format_str(num.toString(10), 3, ",") + "|\n"
-    str += "|Oct:|" + format_str(num.toString(8),  3)  + "|\n"
-    str += "\n"
+    str += "|||\n";
+    str += "|---|---|\n";
+    str += "|Hex:|" + format_str(num.toString(16), 2)  + "|\n";
+    str += "|Dec:|" + format_str(num.toString(10), 3, ",") + "|\n";
+    str += "|Oct:|" + format_str(num.toString(8),  3)  + "|\n";
+    str += "\n";
 
     // TODO: rewrite this too (maybe?)
-    const curr_bits_in_word = get_curr_bits_in_word(num)
-    const temp_str = format_str(num.toString(2).padStart(curr_bits_in_word, "0"), 4, "|")
-    const final_str = format_str(temp_str, 1, "|")
-    const len = final_str.split("|").length + 1
+    const curr_bits_in_word = get_curr_bits_in_word(num);
+    const temp_str = format_str(num.toString(2).padStart(curr_bits_in_word, "0"), 4, "|");
+    const final_str = format_str(temp_str, 1, "|");
+    const len = final_str.split("|").length + 1;
 
-    const str_w_cmds = set_bits_commands(final_str, position)
+    const str_w_cmds = set_bits_commands(final_str, position);
 
-    str += "|" + "".padStart(len, "|") + "\n"
-    str += "|" + "".padEnd(len, "*").split("*").join(":---:|") + "\n"
-    str += "|Bin:|" + str_w_cmds + "|\n"
-    str += "|" + gen_bits_position_string(curr_bits_in_word) + "|\n"
+    str += "|" + "".padStart(len, "|") + "\n";
+    str += "|" + "".padEnd(len, "*").split("*").join(":---:|") + "\n";
+    str += "|Bin:|" + str_w_cmds + "|\n";
+    str += "|" + gen_bits_position_string(curr_bits_in_word) + "|\n";
 
     return str;
 }
 
 class Provider {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
-        const wordRange = document.getWordRangeAtPosition(position)
-        const word = wordRange ? document.getText(wordRange) : ''
+        const wordRange = document.getWordRangeAtPosition(position);
+        const word = wordRange ? document.getText(wordRange) : '';
 
-        const num = parse_number(word)
+        const num = parse_number(word);
 
         if (!num) {
-            return null
+            return null;
         }
 
-        let str = new vscode.MarkdownString()
-        str.isTrusted = true
+        let str = new vscode.MarkdownString();
+        str.isTrusted = true;
 
-        str.appendMarkdown(gen_basic_string(num.number, position))
+        str.appendMarkdown(gen_basic_string(num.number, position));
 
-        return new vscode.Hover(str)
+        return new vscode.Hover(str);
     }
 }
 
@@ -144,40 +144,32 @@ export function activate(context: vscode.ExtensionContext) {
         new Provider()
     );
 
-    context.subscriptions.push(ctx)
+    context.subscriptions.push(ctx);
 
     // some strange things happens here..
     // TODO: rewrite pls...
     const commandHandler = (obj: {"offset": number, "pos":{"line": number, "char": number}}) => {
         if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
-            return null
+            return null;
         }
 
-        const document = vscode.window.activeTextEditor.document
-        const pos = new vscode.Position(obj.pos.line, obj.pos.char)
-        const wordRange = document.getWordRangeAtPosition(pos)
-        const word = wordRange ? document.getText(wordRange) : ''
+        const document = vscode.window.activeTextEditor.document;
+        const pos = new vscode.Position(obj.pos.line, obj.pos.char);
+        const wordRange = document.getWordRangeAtPosition(pos);
+        const word = wordRange ? document.getText(wordRange) : '';
 
-        const num = parse_number(word)
+        const num = parse_number(word);
         if (!num || !wordRange) {
-            return null
+            return null;
         }
 
-        const changed = BigInt(num.number) ^ (BigInt(1) << BigInt(obj.offset))
+        const changed = BigInt(num.number) ^ (BigInt(1) << BigInt(obj.offset));
 
-        let prefix = ""
+        let prefix = "";
         switch (num.base) {
-        case 16:
-            prefix = "0x"
-            break
-
-        case 8:
-            prefix = "0"
-            break
-
-        case 2:
-            prefix = "0b"
-            break
+        case 16: prefix = "0x"; break;
+        case 8: prefix = "0"; break;
+        case 2: prefix = "0b"; break;
         }
 
         return vscode.window.activeTextEditor.edit(
@@ -187,5 +179,5 @@ export function activate(context: vscode.ExtensionContext) {
         )
     }
 
-    context.subscriptions.push(vscode.commands.registerCommand('display_nums.change_bit', commandHandler))
+    context.subscriptions.push(vscode.commands.registerCommand('display_nums.change_bit', commandHandler));
 }
