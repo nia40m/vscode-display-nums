@@ -149,12 +149,11 @@ export function activate(context: vscode.ExtensionContext) {
     // some strange things happens here..
     // TODO: rewrite pls...
     const commandHandler = (obj: {"offset": number, "pos":{"line": number, "char": number}}) => {
-        const document = vscode.window.activeTextEditor?.document
-
-        if (!document) {
+        if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
             return null
         }
 
+        const document = vscode.window.activeTextEditor.document
         const pos = new vscode.Position(obj.pos.line, obj.pos.char)
         const wordRange = document.getWordRangeAtPosition(pos)
         const word = wordRange ? document.getText(wordRange) : ''
@@ -181,7 +180,7 @@ export function activate(context: vscode.ExtensionContext) {
             break
         }
 
-        return vscode.window.activeTextEditor?.edit(
+        return vscode.window.activeTextEditor.edit(
             function (builder) {
                 builder.replace(wordRange, prefix + changed.toString(num.base));
             }
