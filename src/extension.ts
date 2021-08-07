@@ -8,28 +8,32 @@ const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 
 function parse_number(text: string) {
     let match;
+    let underscores = "";
+
+    if (text.includes("_")) {
+        underscores = "_";
+    }
 
     // remove underscores in the number
     text = text.split(split_re).join("");
 
-    match = text.match(dec_re);
-    if (match && match[1]) {
-        return {"number": parseInt(match[1], 10), "base": 10};
-    }
+    let bases = [
+        {"regex": dec_re, "base": 10},
+        {"regex": hex_re, "base": 16},
+        {"regex": oct_re, "base": 8},
+        {"regex": bin_re, "base": 2},
+    ];
 
-    match = text.match(hex_re);
-    if (match && match[1]) {
-        return {"number": parseInt(match[1], 16), "base": 16};
-    }
-
-    match = text.match(oct_re);
-    if (match && match[1]) {
-        return {"number": parseInt(match[1], 8), "base": 8};
-    }
-
-    match = text.match(bin_re);
-    if (match && match[1]) {
-        return {"number": parseInt(match[1], 2), "base": 2};
+    for (let base of bases) {
+        match = text.match(base.regex);
+        if (match && match[1]) {
+            return {
+                "number": parseInt(match[1], base.base),
+                "base": base.base,
+                "suffix": match[2] || "",
+                "underscores": underscores,
+            };
+        }
     }
 
     return undefined;
@@ -114,6 +118,31 @@ function gen_basic_string(num: number, position: vscode.Position) {
     return str;
 }
 
+function convert_number(num: {"number": number, "base": number, "underscores": string, "suffix": string}) {
+    let prefix = "";
+    let output = "";
+
+    switch (num.base) {
+    case 16:
+        prefix = "0x";
+        output = format_str(num.number.toString(num.base), 4, num.underscores);
+        break;
+    case 10:
+        output = format_str(num.number.toString(num.base), 3, num.underscores);
+        break;
+    case 8:
+        prefix = "0";
+        output = format_str(num.number.toString(num.base), 4, num.underscores);
+        break;
+    case 2:
+        prefix = "0b";
+        output = format_str(num.number.toString(num.base), 4, num.underscores);
+        break;
+    }
+
+    return prefix + output + num.suffix;
+}
+
 class Provider {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
         const wordRange = document.getWordRangeAtPosition(position);
@@ -174,18 +203,11 @@ export function activate(context: vscode.ExtensionContext) {
         bin_num = bin_num.substr(0, obj.offset) + val.toString(2) + bin_num.substr(obj.offset + 1);
 
         // turn back it to int
-        const changed = parseInt(bin_num, 2);
-
-        let prefix = "";
-        switch (num.base) {
-        case 16: prefix = "0x"; break;
-        case 8: prefix = "0"; break;
-        case 2: prefix = "0b"; break;
-        }
+        num.number = parseInt(bin_num, 2);
 
         return vscode.window.activeTextEditor.edit(
             function (builder) {
-                builder.replace(wordRange, prefix + changed.toString(num.base));
+                builder.replace(wordRange, convert_number(num));
             }
         )
     }
