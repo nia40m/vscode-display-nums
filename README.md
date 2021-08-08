@@ -6,3 +6,9 @@ This plugin converts the hovered number in decimal, hexadecimal, binary or octal
 
 ### Additional functionality
 * Pressing any digit of binary number makes it opposite of it's current value.
+
+## FIXME:
+Here is the list of some troubles in the plugin I have no solution for:
+- slow hover content update after bit change or convert operation;
+- hover is too small for big numbers;
+- problems with big numbers (probably BigInt could solve them but doesn't work with old VS code version).
