@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 const split_re = /\B_\B/i;
-const dec_re = /^(0|([1-9][0-9]*))(u|l|ul|lu|ll|ull|llu)?$/i;
+const dec_re = /^(0|[1-9][0-9]*)(u|l|ul|lu|ll|ull|llu)?$/i;
 const hex_re = /^0x([0-9a-f]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const oct_re = /^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
@@ -94,12 +94,23 @@ function get_curr_bits_in_word(num: number) {
 
 function gen_basic_string(num: number, position: vscode.Position) {
     let str: string = "";
+    let data = {"base": 0, "pos":{"line": position.line, "char": position.character}};
 
     str += "|||\n";
     str += "|---|---|\n";
-    str += "|Hex:|" + format_str(num.toString(16), 2)  + "|\n";
-    str += "|Dec:|" + format_str(num.toString(10), 3, ",") + "|\n";
-    str += "|Oct:|" + format_str(num.toString(8),  3)  + "|\n";
+
+    data.base = 16;
+    str += "|[Hex](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
+    str += format_str(num.toString(16), 2)  + "|\n";
+
+    data.base = 10;
+    str += "|[Dec](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
+    str += format_str(num.toString(10), 3, ",") + "|\n";
+
+    data.base = 8;
+    str += "|[Oct](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
+    str += format_str(num.toString(8),  3)  + "|\n";
+
     str += "\n";
 
     // TODO: rewrite this too (maybe?)
@@ -112,7 +123,9 @@ function gen_basic_string(num: number, position: vscode.Position) {
 
     str += "|" + "".padStart(len, "|") + "\n";
     str += "|" + "".padEnd(len, "*").split("*").join(":---:|") + "\n";
-    str += "|Bin:|" + str_w_cmds + "|\n";
+    data.base = 2;
+    str += "|[Bin](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
+    str += str_w_cmds + "|\n";
     str += "|" + gen_bits_position_string(curr_bits_in_word) + "|\n";
 
     return str;
@@ -177,7 +190,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // some strange things happens here..
     // TODO: rewrite pls...
-    const commandHandler = (obj: {"offset": number, "pos":{"line": number, "char": number}}) => {
+    const change_bit_commandHandler = (obj: {"offset": number, "pos":{"line": number, "char": number}}) => {
         if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
             return null;
         }
@@ -212,5 +225,31 @@ export function activate(context: vscode.ExtensionContext) {
         )
     }
 
-    context.subscriptions.push(vscode.commands.registerCommand('display_nums.change_bit', commandHandler));
+    context.subscriptions.push(vscode.commands.registerCommand('display_nums.change_bit', change_bit_commandHandler));
+
+    const convert_number_commandHandler = (obj: {"base": number, "pos":{"line": number, "char": number}}) => {
+        if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
+            return null;
+        }
+
+        const document = vscode.window.activeTextEditor.document;
+        const pos = new vscode.Position(obj.pos.line, obj.pos.char);
+        const wordRange = document.getWordRangeAtPosition(pos);
+        const word = wordRange ? document.getText(wordRange) : '';
+
+        const num = parse_number(word);
+        if (!num || !wordRange) {
+            return null;
+        }
+
+        num.base = obj.base;
+
+        return vscode.window.activeTextEditor.edit(
+            function (builder) {
+                builder.replace(wordRange, convert_number(num));
+            }
+        )
+    }
+
+    context.subscriptions.push(vscode.commands.registerCommand('display_nums.convert_number', convert_number_commandHandler));
 }
