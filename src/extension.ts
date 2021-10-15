@@ -92,6 +92,15 @@ function get_curr_bits_in_word(num: number) {
     return num.toString(2).length + ((-num.toString(2).length) & 0x3);
 }
 
+function get_closer_bits_num(curr_bits: number) {
+    let i: number = 8; // bits number in byte
+    while (i < curr_bits) {
+        i <<= 1;
+    }
+
+    return i;
+}
+
 function gen_basic_string(num: number, position: vscode.Position) {
     let str: string = "";
     let data = {"base": 0, "pos":{"line": position.line, "char": position.character}};
@@ -105,7 +114,17 @@ function gen_basic_string(num: number, position: vscode.Position) {
 
     data.base = 10;
     str += "|[Dec](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
-    str += format_str(num.toString(10), 3, ",") + "|\n";
+    str += format_str(num.toString(10), 3, ",");
+
+    // check if number can be negative
+    let sign_bit = get_closer_bits_num(Math.floor(num / 2).toString(2).length) - 1;
+    if (num & (1 << sign_bit)) {
+        let mask = Math.pow(2, (sign_bit + 1)) - num;
+
+        str += " (-" + mask + ")";
+    }
+
+    str += "|\n";
 
     data.base = 8;
     str += "|[Oct](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
