@@ -125,7 +125,7 @@ function gen_basic_string(num: number, position: vscode.Position) {
     str += "|" + "".padEnd(len, "*").split("*").join(":---:|") + "\n";
     data.base = 2;
     str += "|[Bin](command:display_nums.convert_number?" + JSON.stringify(data) + "):|";
-    str += str_w_cmds + "|\n";
+    str += str_w_cmds + " " + "|\n";
     str += "|" + gen_bits_position_string(curr_bits_in_word) + "|\n";
 
     return str;
