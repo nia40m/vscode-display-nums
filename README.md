@@ -6,6 +6,7 @@ This plugin converts the hovered number in decimal, hexadecimal, binary or octal
 
 ### Additional functionality
 * Pressing any digit of binary number makes it opposite of it's current value.
+* Pressing hex/dec/oct/bin will convert number to selected numeral system.
 
 ## FIXME:
 Here is the list of some troubles in the plugin I have no solution for:

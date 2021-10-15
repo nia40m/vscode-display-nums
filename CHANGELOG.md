@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 
+## 0.2.0 - 2021-10-15
+### Added
+- Functionality to convert in different numeral systems
+- Displaying numbers as signed if possible
+
+### Fixed
+- Preservation of underscors and number's suffix
+
 ## 0.1.2 - 2020-09-24
 ### Fixed
 - Plugin now works with VS Code 1.20.1 and newer
