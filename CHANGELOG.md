@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 
+## 0.3.0 - 2023-06-12
+### Added
+- Support for 65xx cpu family assembler notation of hex and binary numbers
+
 ## 0.2.0 - 2021-10-15
 ### Added
 - Functionality to convert in different numeral systems
