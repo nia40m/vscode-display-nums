@@ -6,6 +6,10 @@ const hex_re = /^0x([0-9a-f]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const oct_re = /^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 
+const select_re = /[%$]?[0-9a-fulx_]+$/i;
+const hex_65xx_re = /^\$([0-9a-f]+)$/i;
+const bin_65xx_re = /^%([01]+)$/i;
+
 function parse_number(text: string) {
     let match;
     let underscores = "";
@@ -22,6 +26,8 @@ function parse_number(text: string) {
         {"regex": hex_re, "base": 16},
         {"regex": oct_re, "base": 8},
         {"regex": bin_re, "base": 2},
+        {"regex": hex_65xx_re, "base": 16},
+        {"regex": bin_65xx_re, "base": 2},
     ];
 
     for (let base of bases) {
@@ -177,7 +183,7 @@ function convert_number(num: {"number": number, "base": number, "underscores": s
 
 class Provider {
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
-        const wordRange = document.getWordRangeAtPosition(position);
+        const wordRange = document.getWordRangeAtPosition(position, select_re);
         const word = wordRange ? document.getText(wordRange) : '';
 
         const num = parse_number(word);
@@ -216,7 +222,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const document = vscode.window.activeTextEditor.document;
         const pos = new vscode.Position(obj.pos.line, obj.pos.char);
-        const wordRange = document.getWordRangeAtPosition(pos);
+        const wordRange = document.getWordRangeAtPosition(pos, select_re);
         const word = wordRange ? document.getText(wordRange) : '';
 
         const num = parse_number(word);
@@ -253,7 +259,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const document = vscode.window.activeTextEditor.document;
         const pos = new vscode.Position(obj.pos.line, obj.pos.char);
-        const wordRange = document.getWordRangeAtPosition(pos);
+        const wordRange = document.getWordRangeAtPosition(pos, select_re);
         const word = wordRange ? document.getText(wordRange) : '';
 
         const num = parse_number(word);
