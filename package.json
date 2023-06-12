@@ -3,7 +3,7 @@
     "displayName": "Display numbers",
     "description": "Shows a number in 10, 16, 2 and 8 numeral systems",
     "icon": "icon.png",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "publisher": "nia40m",
     "engines": {
         "vscode": "^1.20.1"
@@ -26,7 +26,7 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
     "main": "./out/extension",
     "contributes": {},
@@ -38,7 +38,7 @@
     "devDependencies": {
         "@types/node": "^12.11.7",
         "@types/vscode": "^1.20.1",
-        "typescript": "^3.6.4",
-        "tslint": "^5.20.0"
+        "tslint": "^5.20.0",
+        "typescript": "^3.9.10"
     }
 }
