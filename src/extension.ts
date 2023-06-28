@@ -6,7 +6,7 @@ const hex_re = /^0x([0-9a-f]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const oct_re = /^(0[0-7]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 const bin_re = /^0b([01]+)(u|l|ul|lu|ll|ull|llu)?$/i;
 
-const select_re = /[%$]?[0-9a-fulx_]+$/i;
+const select_re = /[%$]?[0-9a-fulx_]+/i;
 const hex_65xx_re = /^\$([0-9a-f]+)$/i;
 const bin_65xx_re = /^%([01]+)$/i;
 
