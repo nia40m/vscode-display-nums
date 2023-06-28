@@ -3,7 +3,7 @@
     "displayName": "Display numbers",
     "description": "Shows a number in 10, 16, 2 and 8 numeral systems",
     "icon": "icon.png",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "publisher": "nia40m",
     "engines": {
         "vscode": "^1.20.1"

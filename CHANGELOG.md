@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 
+## 0.3.1 - 2023-06-29
+### Fixed
+- Regular expression that used to extract hovered numbers
+
 ## 0.3.0 - 2023-06-12
 ### Added
 - Support for 65xx cpu family assembler notation of hex and binary numbers
