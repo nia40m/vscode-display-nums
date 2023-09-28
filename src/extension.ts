@@ -22,19 +22,19 @@ function parse_number(text: string) {
     text = text.split(split_re).join("");
 
     let bases = [
-        {"regex": dec_re, "base": 10},
-        {"regex": hex_re, "base": 16},
-        {"regex": oct_re, "base": 8},
-        {"regex": bin_re, "base": 2},
-        {"regex": hex_65xx_re, "base": 16},
-        {"regex": bin_65xx_re, "base": 2},
+        {"regex": dec_re, "base": 10, "prefix": ""},
+        {"regex": hex_re, "base": 16, "prefix": "0x"},
+        {"regex": oct_re, "base": 8, "prefix": "0o"},
+        {"regex": bin_re, "base": 2, "prefix": "0b"},
+        {"regex": hex_65xx_re, "base": 16, "prefix": "0x"},
+        {"regex": bin_65xx_re, "base": 2, "prefix": "0b"},
     ];
 
     for (let base of bases) {
         match = text.match(base.regex);
         if (match && match[1]) {
             return {
-                "number": parseInt(match[1], base.base),
+                "number": BigInt(base.prefix + match[1]),
                 "base": base.base,
                 "suffix": match[2] || "",
                 "underscores": underscores,
@@ -94,7 +94,7 @@ function set_bits_commands(str: string, position: vscode.Position) {
 
 // TODO: add configs with default length
 // do vscode have configs?? oO
-function get_curr_bits_in_word(num: number) {
+function get_curr_bits_in_word(num: bigint) {
     return num.toString(2).length + ((-num.toString(2).length) & 0x3);
 }
 
@@ -107,7 +107,7 @@ function get_closer_bits_num(curr_bits: number) {
     return i;
 }
 
-function gen_basic_string(num: number, position: vscode.Position) {
+function gen_basic_string(num: bigint, position: vscode.Position) {
     let str: string = "";
     let data = {"base": 0, "pos":{"line": position.line, "char": position.character}};
 
@@ -123,9 +123,9 @@ function gen_basic_string(num: number, position: vscode.Position) {
     str += format_str(num.toString(10), 3, ",");
 
     // check if number can be negative
-    let sign_bit = get_closer_bits_num(Math.floor(num / 2).toString(2).length) - 1;
-    if (num & (1 << sign_bit)) {
-        let mask = Math.pow(2, (sign_bit + 1)) - num;
+    let sign_bit = BigInt(get_closer_bits_num((num / 2n).toString(2).length) - 1);
+    if (num & (1n << sign_bit)) {
+        let mask = (2n ** (sign_bit + 1n)) - num;
 
         str += " (-" + mask + ")";
     }
@@ -156,7 +156,7 @@ function gen_basic_string(num: number, position: vscode.Position) {
     return str;
 }
 
-function convert_number(num: {"number": number, "base": number, "underscores": string, "suffix": string}) {
+function convert_number(num: {"number": bigint, "base": number, "underscores": string, "suffix": string}) {
     let prefix = "";
     let output = "";
 
@@ -238,10 +238,10 @@ export function activate(context: vscode.ExtensionContext) {
         const val = bin_num[obj.offset] == "0" ? 1 : 0;
 
         // replace that bit with magic
-        bin_num = bin_num.substr(0, obj.offset) + val.toString(2) + bin_num.substr(obj.offset + 1);
+        bin_num = "0b" + bin_num.substr(0, obj.offset) + val.toString(2) + bin_num.substr(obj.offset + 1);
 
         // turn back it to int
-        num.number = parseInt(bin_num, 2);
+        num.number = BigInt(bin_num);
 
         return vscode.window.activeTextEditor.edit(
             function (builder) {
