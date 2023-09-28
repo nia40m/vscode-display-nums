@@ -36,3 +36,8 @@ This file exist to check all formats and store regression tests
 
 	 123456, [0x987], (0b1110)
 	 -45 + 5 = 178;
+
+### Problem with big numbers
+
+	0xbabadedac0cac01a
+	0xf00f12340badc0de00777000
