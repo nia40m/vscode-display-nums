@@ -6,7 +6,7 @@
     "version": "0.3.1",
     "publisher": "nia40m",
     "engines": {
-        "vscode": "^1.20.1"
+        "vscode": "^1.46.1"
     },
     "repository": {
         "type": "git",
