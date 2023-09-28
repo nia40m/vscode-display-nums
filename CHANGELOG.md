@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 
+## 0.3.2 - 2023-09-29
+### Fixed
+- Large numbers were not displaying correctly
+- Minimal VS Code version changed to 1.46.1
+### Added
+- License file
+- Testfile to check all the functionality and regression testcases
+
 ## 0.3.1 - 2023-06-29
 ### Fixed
 - Regular expression that used to extract hovered numbers

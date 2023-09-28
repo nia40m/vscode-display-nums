@@ -9,6 +9,5 @@ This plugin converts the hovered number in decimal, hexadecimal, binary or octal
 * Pressing hex/dec/oct/bin will convert number to selected numeral system.
 
 ## TODO
-- fix slow hover content update after bit change or convert operation;
-- change hover size coz is too small for big numbers;
-- fix problems with big numbers (probably BigInt could solve them but doesn't work with old VS code version).
+- fix hover content update after bit change or convert operation;
+- change hover size coz is too small for big numbers.
